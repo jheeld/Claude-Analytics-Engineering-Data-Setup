@@ -47,45 +47,22 @@ If data is provided, begin filling the sections starting with data loading and E
 
 ---
 
-## Step 2 — Generate SQL Queries File
+## Step 2 — Generate SQL Queries (inline in notebook)
 
-Create a file at `notebooks/queries.sql` with the following basic queries adapted to the dataset's table name and columns:
+Do NOT create a separate .sql file. Instead, add a code cell in the notebook that generates and writes `notebooks/queries.sql` on the fly using the actual table name, column names, and target column resolved from the dataset context step.
 
-```sql
--- 1. Row count
-SELECT COUNT(*) AS total_rows FROM <table>;
+The generated SQL must include:
 
--- 2. Class / target distribution
-SELECT <target_col>, COUNT(*) AS count,
-       ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) AS pct
-FROM <table>
-GROUP BY <target_col>;
+1. Row count
+2. Target distribution with percentages
+3. Missing values per column (one line per column)
+4. Descriptive stats for all numeric columns (min, max, mean, std, percentiles)
+5. Sample rows
+6. Target rate grouped by each categorical feature
+7. Per-entity volume and target rate (if an entity/group column exists)
+8. Volume over time (if a date column exists)
 
--- 3. Missing values per column
-SELECT
-  COUNT(*) AS total_rows,
-  <col_nulls>
-FROM <table>;
-
--- 4. Basic descriptive stats for numeric columns
-SELECT
-  MIN(<numeric_col>) AS min_val,
-  MAX(<numeric_col>) AS max_val,
-  AVG(<numeric_col>) AS mean_val,
-  STDDEV(<numeric_col>) AS std_val
-FROM <table>;
-
--- 5. Sample rows
-SELECT * FROM <table> LIMIT 10;
-
--- 6. Target rate by a categorical or binned feature (adapt as needed)
-SELECT <feature_col>, AVG(<target_col>) AS target_rate, COUNT(*) AS n
-FROM <table>
-GROUP BY <feature_col>
-ORDER BY target_rate DESC;
-```
-
-Replace `<table>`, `<target_col>`, `<numeric_col>`, and `<feature_col>` with the actual names from the dataset context step.
+Use actual column names — do not use placeholders like `<table>` in the output file.
 
 ## Outlier Detection Checks
 

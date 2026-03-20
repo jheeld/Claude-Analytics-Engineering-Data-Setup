@@ -6,25 +6,38 @@ disable-model-invocation: false
 
 When provided with a CSV, JSON, or dataframe, follow this workflow.
 
+## Pre-Step: Multiple Files Check
+
+If more than one file is provided (CSV, JSON, or any combination):
+
+**Stop and ask before doing anything else:**
+
+1. What does each file represent? (e.g. transactions, users, products)
+2. How should the files be joined? (join key, join type: inner/left/right)
+3. Is there a primary file that drives the unit of analysis?
+4. Are there any known data quality issues across files (e.g. missing keys, duplicates)?
+
+Do NOT inspect, describe, or run any context steps until all join questions are answered and the files have been merged into a single working dataframe.
+
 ## Step 1: Inspect the dataset first
 
-Before making assumptions, inspect the dataset and summarize:
+Before making assumptions, always output the following in a clean, readable format — whether called standalone or from the `ml-case-notebook` orchestrator:
 
-- column names
-- sample values
-- likely data types
+1. **10 random rows** — `df.sample(10)` displayed as a formatted table
+2. **Descriptive statistics** — `df.describe()` rounded to 2 decimal places
+3. **Schema summary** — column name, dtype, non-null count, missing count per column
+4. **Categorical value counts** — for every column with dtype `object` or low-cardinality int, print `value_counts()` with percentages
+5. **Outlier summary** — for every numeric column, compute IQR bounds and print count of values below lower and above upper bound
+
+Format all outputs with clear section headers (e.g. `=== RANDOM SAMPLE ===`, `=== DESCRIPTIVE STATS ===`, `=== CATEGORICAL VALUES ===`, `=== OUTLIERS ===`).
+
+Then summarize:
+
 - possible identifier columns
 - possible datetime columns
 - possible target-like columns
 
-If a dataframe is already available, first look at:
-
-- `df.head()`
-- `df.info()`
-- missing value summary
-- basic descriptive statistics where useful
-
-If a CSV or JSON file path is provided, suggest loading it first if it has not already been loaded.
+If a CSV or JSON file path is provided, load it first before inspecting.
 
 ## Step 2: Ask the user for missing context
 
