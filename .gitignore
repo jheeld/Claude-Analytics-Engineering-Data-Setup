@@ -1,2 +1,31 @@
+# Virtual environments
 .venv/
-.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Tokens & credentials
+*.json
+!package.json
+*.env
+.env*
+*.token
+*_token*
+*secret*
+kaggle.json
+credentials.json
+
+# Data files
+*.csv
+*.parquet
+*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
